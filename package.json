@@ -1,8 +1,9 @@
 {
   "name": "nidar-quiz",
   "version": "1.0.0",
-  "description": "NIDAR Quiz - Team AEROVEGA",
+  "description": "Real-time NIDAR quiz platform for Team AEROVEGA",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
-  "dependencies": { "express": "^4.19.2", "socket.io": "^4.7.5" }
+  "engines": { "node": "20.x" },
+  "dependencies": { "cookie-parser": "^1.4.7", "dotenv": "^16.4.7", "express": "^4.21.2", "socket.io": "^4.8.1" }
 }
