@@ -19,6 +19,11 @@
     socketScript.onload = socketScript.onerror = () => {
       const appScript = document.createElement('script');
       appScript.src = '/js/app.js';
+      appScript.onload = () => {
+        const parserScript = document.createElement('script');
+        parserScript.src = '/js/bulk-parser.js';
+        document.body.appendChild(parserScript);
+      };
       document.body.appendChild(appScript);
     };
     document.head.appendChild(socketScript);
