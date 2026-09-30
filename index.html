@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NIDAR Quiz - Team AEROVEGA</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06101e;--pn:#0d1c31;--ln:#1d3556;--tx:#e6f1ff;--mu:#8aa4c4;--cy:#27d3f5;--or:#ff8a1f;--ok:#2ecc8f;--er:#ff6b6b;--on:#04202a}
+[data-theme=light]{--bg:#eaf1f8;--pn:#fff;--ln:#c6d6e8;--tx:#0b1e33;--mu:#557190;--cy:#0a86a8;--or:#d95f00;--ok:#12805c;--er:#c62b2b;--on:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 Barlow,sans-serif;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.28;background-image:linear-gradient(var(--ln) 1px,transparent 1px),linear-gradient(90deg,var(--ln) 1px,transparent 1px);background-size:48px 48px}
+[hidden]{display:none!important}
+header{position:relative;text-align:center;padding:30px 16px 12px;overflow:hidden}
+.tb{position:absolute;top:12px;right:12px;display:flex;gap:8px;z-index:2}
+.radar{position:absolute;left:50%;top:50%;width:260px;height:260px;margin:-130px 0 0 -130px;border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 40px,var(--ln) 41px 42px);opacity:.75}
+.radar::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 72%,color-mix(in srgb,var(--cy) 45%,transparent));animation:sw 5s linear infinite}
+@keyframes sw{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.radar::after{animation:none}}
+h1,h2,h3{font-family:'Chakra Petch',sans-serif;margin:0}
+h1{position:relative;font-size:clamp(2.3rem,8vw,3.8rem);letter-spacing:.02em}
+.sub{position:relative;margin:0;color:var(--or);font:700 1.1rem 'Chakra Petch',sans-serif;letter-spacing:.14em}
+main{position:relative;max-width:1000px;margin:0 auto;padding:16px}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:20px;margin-bottom:16px}
+.narrow{max-width:420px;margin:0 auto}
+label{display:block;margin:12px 0 4px;color:var(--mu);font-size:.9rem}
+input,textarea{width:100%;padding:10px 12px;background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:6px;font:inherit}
+textarea{min-height:200px;resize:vertical;font-family:ui-monospace,Consolas,monospace;font-size:.9rem}
+input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--cy);outline-offset:1px}
+.btn{padding:10px 18px;border:0;border-radius:6px;background:var(--cy);color:var(--on);font:700 1rem 'Chakra Petch',sans-serif;cursor:pointer}
+.btn.alt{background:transparent;color:var(--tx);border:1px solid var(--ln)}
+.btn.or{background:var(--or);color:#fff}
+.btn.sm{padding:5px 10px;font-size:.85rem}
+.btn:disabled{opacity:.5;cursor:default}
+.full{width:100%;margin-top:16px}
+.tabs{display:flex;gap:8px;margin-bottom:6px}.tabs .btn{flex:1}
+.tabs .on{background:var(--cy);color:var(--on);border-color:var(--cy)}
+.err{color:var(--er);min-height:1.4em;margin:10px 0 0}
+.mu{color:var(--mu)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.tag{border:1px solid var(--or);color:var(--or);border-radius:20px;padding:2px 12px;font-size:.85rem}
+.code{font:700 2.2rem 'Chakra Petch',sans-serif;color:var(--or);letter-spacing:.2em}
+.grid{display:grid;gap:16px}@media(min-width:900px){.grid{grid-template-columns:1.15fr 1fr}}
+.opts{display:grid;gap:10px;margin-top:16px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;padding:14px;background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:8px;font:inherit;font-size:1.05rem;cursor:pointer}
+.opt b{font-family:'Chakra Petch';color:var(--cy);min-width:1.4em}
+.opt.sel{border-color:var(--or);background:color-mix(in srgb,var(--or) 14%,var(--bg))}
+.opt:disabled{cursor:default}
+.track{height:8px;background:var(--ln);border-radius:8px;overflow:hidden;margin:12px 0}
+#bar{height:100%;width:100%;background:var(--cy)}
+.q{font:500 1.35rem/1.35 'Chakra Petch',sans-serif;margin:8px 0}
+.big{font:700 3rem 'Chakra Petch',sans-serif;color:var(--cy)}
+.item{border-top:1px solid var(--ln);padding:10px 0}.ok{color:var(--ok)}.bad{color:var(--er)}
+ol{padding-left:22px;margin:8px 0}
+.pv{border-top:1px solid var(--ln);padding:8px 0;font-size:.95rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="tb"><button class="btn alt sm" id="out" hidden>Log out</button><button class="btn alt sm" id="theme">Light mode</button></div>
+  <div class="radar" aria-hidden="true"></div>
+  <h1>NIDAR Quiz</h1>
+  <p class="sub">Team AEROVEGA</p>
+</header>
+
+<main>
+  <!-- Login -->
+  <section id="vLogin" class="card narrow" hidden>
+    <div class="tabs"><button class="btn alt on" data-role="p">Participant</button><button class="btn alt" data-role="a">Admin</button></div>
+    <div id="nameRow"><label for="lname">Your name</label><input id="lname" maxlength="20" autocomplete="off"></div>
+    <label for="luser">Username</label><input id="luser" autocomplete="off">
+    <label for="lpass">Password</label><input id="lpass" type="password">
+    <p class="err" id="lerr"></p>
+    <button class="btn full" id="lgo">Log in</button>
+  </section>
+
+  <!-- Join room -->
+  <section id="vJoin" class="card narrow" hidden>
+    <h2>Join the quiz room</h2>
+    <label for="jcode">Room code</label><input id="jcode" inputmode="numeric" maxlength="12" autocomplete="off">
+    <p class="err" id="jerr"></p>
+    <button class="btn full" id="jgo">Join room</button>
+  </section>
+
+  <!-- Participant play area -->
+  <section id="vPlay" class="card" hidden><div id="pBody"></div></section>
+
+  <!-- Admin -->
+  <section id="vAdmin" hidden>
+    <div class="card row"><div><span class="mu">Room code for every quiz</span><div class="code" id="acode">123456</div></div><div class="mu" id="acount"></div></div>
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2>Create a quiz</h2>
+          <label for="qt">Quiz title</label><input id="qt" maxlength="80">
+          <div class="row" style="align-items:flex-end">
+            <div style="flex:1"><label for="qs">Seconds per question</label><input id="qs" type="number" value="30" min="5" max="600"></div>
+            <div style="flex:1"><label for="qp">Points per question</label><input id="qp" type="number" value="10" min="1" max="100"></div>
+          </div>
+          <label for="qa">Paste questions and answers</label>
+          <textarea id="qa" placeholder="Q1. Which motor type is used in most quadcopters?&#10;A) Brushed  B) BLDC  C) Stepper  D) Servo&#10;Ans: B&#10;&#10;Q2. The flight controller uses the ______ filter for attitude estimation.&#10;Ans: Kalman | EKF"></textarea>
+          <p class="mu" style="font-size:.9rem;margin:6px 0 0">Questions with options are multiple choice. Questions without options are fill in the blank; separate accepted answers with |.</p>
+          <div class="row" style="margin-top:12px;justify-content:flex-start"><button class="btn" id="parse">Preview questions</button><button class="btn or" id="saveq" disabled>Save quiz</button></div>
+          <p class="err" id="qerr"></p>
+          <div id="preview"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card"><h2>Live room</h2><div id="live"></div></div>
+        <div class="card"><h2>Saved quizzes</h2><div id="qlist"></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const $=s=>document.querySelector(s), sock=io();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let me=JSON.parse(sessionStorage.getItem('me')||'null'),st={phase:'idle',players:[],board:[]},quizzes=[],draft=[],res=null,role='p',key=null,locked=false,endAt=0;
+
+/* Theme */
+const setTheme=t=>{document.documentElement.dataset.theme=t;localStorage.setItem('nq-theme',t);$('#theme').textContent=t==='dark'?'Light mode':'Dark mode'};
+setTheme(localStorage.getItem('nq-theme')||'dark');
+$('#theme').onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+
+/* Views */
+const show=v=>['vLogin','vJoin','vPlay','vAdmin'].forEach(x=>$('#'+x).hidden=x!==v);
+function setMe(r){me={token:r.token,role:r.role,name:r.name,joined:r.joined};sessionStorage.setItem('me',JSON.stringify(me))}
+function render(){
+  $('#out').hidden=!me;
+  if(!me)return show('vLogin');
+  if(me.role==='a'){show('vAdmin');return renderLive()}
+  if(!me.joined)return show('vJoin');
+  show('vPlay');renderPlay();
+}
+sock.on('connect',()=>{
+  if(me)sock.emit('login',{token:me.token},r=>{if(!r.ok){me=null;sessionStorage.removeItem('me')}else setMe(r);render()});
+  else render();
+});
+sock.on('state',s=>{st=s;endAt=Date.now()+(s.left||0);render()});
+sock.on('quizzes',q=>{quizzes=q;renderQuizzes()});
+sock.on('results',r=>{res=r;key=null;render()});
+
+/* Login */
+document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{
+  role=b.dataset.role;
+  document.querySelectorAll('[data-role]').forEach(x=>x.classList.toggle('on',x===b));
+  $('#nameRow').hidden=role==='a';$('#lerr').textContent='';
+});
+function login(){
+  sock.emit('login',{role,name:$('#lname').value,user:$('#luser').value.trim(),pass:$('#lpass').value},r=>{
+    if(!r.ok)return $('#lerr').textContent=r.err;
+    setMe(r);$('#lpass').value='';render();
+  });
+}
+$('#lgo').onclick=login;$('#lpass').onkeydown=e=>e.key==='Enter'&&login();
+$('#out').onclick=()=>{sock.emit('logout');me=null;res=null;key=null;sessionStorage.removeItem('me');render()};
+
+/* Join */
+function join(){
+  sock.emit('join',$('#jcode').value,r=>{
+    if(!r.ok)return $('#jerr').textContent=r.err;
+    me.joined=true;sessionStorage.setItem('me',JSON.stringify(me));render();
+  });
+}
+$('#jgo').onclick=join;$('#jcode').onkeydown=e=>e.key==='Enter'&&join();
+
+/* Participant */
+function renderPlay(){
+  const p=st.phase,b=$('#pBody');
+  const k=(p==='lobby'||p==='idle')?null:p+st.idx+(p==='done'&&res?'r':'');
+  if(k&&k===key)return;key=k;
+  if(p==='idle'||p==='lobby'){
+    b.innerHTML=`<h2>${p==='idle'?'Waiting for the admin to open a quiz':esc(st.title)}</h2>
+      <p class="mu">${p==='lobby'?'You are in the room. The quiz starts when the admin presses start.':'Stay on this page.'}</p>
+      <p><b>${st.players.length}</b> of ${st.max} players in the room: ${st.players.map(esc).join(', ')}</p>`;
+  }else if(p==='question'){
+    locked=false;const q=st.question;
+    b.innerHTML=`<div class="row"><span class="mu">Question ${st.idx+1} of ${st.total}, ${q.points} points</span><span id="left" class="tag"></span></div>
+      <div class="track"><div id="bar"></div></div><div class="q">${esc(q.text)}</div>
+      ${q.type==='mcq'?`<div class="opts">${q.options.map((o,i)=>`<button class="opt" data-i="${i}"><b>${'ABCDEF'[i]}</b>${esc(o)}</button>`).join('')}</div>`
+      :`<label for="fa">Your answer</label><input id="fa" autocomplete="off"><button class="btn full" id="fs">Submit answer</button>`}
+      <p class="mu" id="msg"></p>`;
+  }else if(p==='closed'){
+    b.innerHTML=`<h2>Time is up</h2><p class="mu">Waiting for the admin to show the next question.</p>`;
+  }else if(p==='done'){
+    b.innerHTML=!res?`<p class="mu">Loading your results...</p>`:`<h2>Quiz complete</h2>
+      <div class="big">${res.score} points</div><p>Your rank: <b>${res.rank}</b> of ${st.board.length}</p>
+      <h3 style="margin-top:16px">Leaderboard</h3><ol>${st.board.map(x=>`<li>${esc(x.name)}: ${x.score}</li>`).join('')}</ol>
+      <h3 style="margin-top:16px">Answers</h3>${res.items.map((it,i)=>`<div class="item"><b>${i+1}. ${esc(it.text)}</b><br>
+      Correct answer: <span class="ok">${esc(it.correct)}</span><br>Your answer: <span class="${it.ok?'ok':'bad'}">${it.yours===null?'No answer':esc(it.yours)}</span></div>`).join('')}`;
+  }
+}
+function submit(v,btn){
+  if(locked)return;locked=true;
+  if(btn)btn.classList.add('sel');
+  $('#pBody').querySelectorAll('button,input').forEach(x=>x.disabled=true);
+  sock.emit('answer',v,r=>{$('#msg').textContent=r.ok?'Answer locked in. Wait for the next question.':'Time is up or you already answered.'});
+}
+$('#pBody').onclick=e=>{
+  const o=e.target.closest('.opt');if(o)return submit(+o.dataset.i,o);
+  if(e.target.id==='fs'){const v=$('#fa').value.trim();if(v)submit(v)}
+};
+$('#pBody').onkeydown=e=>{if(e.target.id==='fa'&&e.key==='Enter'){const v=e.target.value.trim();if(v)submit(v)}};
+setInterval(()=>{
+  const bar=$('#bar');if(!bar||st.phase!=='question')return;
+  const left=Math.max(0,endAt-Date.now());
+  bar.style.width=(left/(st.secs*1000)*100)+'%';$('#left').textContent=Math.ceil(left/1000)+' s left';
+},200);
+
+/* Admin: parse pasted questions */
+function parse(text,secs,pts){
+  const out=[];let c=null,skipped=0;
+  const push=()=>{
+    if(!c)return;
+    if(c.opts.length>=2){
+      let i='ABCDEF'.indexOf((c.ans[0]||'').toUpperCase());
+      if(i<0||c.ans.length>3&&!/^[a-f][).\s]/i.test(c.ans))i=c.opts.findIndex(o=>o.toLowerCase()===c.ans.toLowerCase().replace(/^[a-f][).]\s*/,''));
+      if(i>=0&&i<c.opts.length)out.push({type:'mcq',text:c.text,options:c.opts,answer:i,points:pts,secs});else skipped++;
+    }else if(c.ans)out.push({type:'fill',text:c.text,options:[],answer:c.ans,points:pts,secs});else skipped++;
+    c=null;
+  };
+  for(const raw of text.split('\n')){
+    const l=raw.trim();if(!l)continue;let m;
+    if(m=l.match(/^ans(?:wer)?\s*[:\-]\s*(.+)$/i)){if(c)c.ans=m[1].trim();continue}
+    if(m=l.match(/^q?\s*\d+\s*[.)\-:]\s*(.+)$/i)){push();c={text:m[1].trim(),opts:[],ans:''};continue}
+    if(!c)continue;
+    if(/^\(?[A-Fa-f][).]\s/.test(l)){
+      l.split(/\s+(?=\(?[B-Fb-f][).]\s)/).forEach(o=>c.opts.push(o.replace(/^\(?[A-Fa-f][).]\s*/,'').trim()));
+    }else c.text+=' '+l;
+  }
+  push();return{out,skipped};
+}
+$('#parse').onclick=()=>{
+  const r=parse($('#qa').value,+$('#qs').value||30,+$('#qp').value||10);
+  draft=r.out;$('#qerr').textContent=r.skipped?`Skipped ${r.skipped} question(s) with no valid answer.`:'';renderPreview();
+};
+function renderPreview(){
+  $('#saveq').disabled=!draft.length;
+  $('#preview').innerHTML=draft.length?`<p class="mu">${draft.length} question(s) ready</p>`+draft.map((q,i)=>`<div class="pv"><div class="row"><b>${i+1}. ${esc(q.text)}</b><button class="btn alt sm" data-rm="${i}">Remove</button></div>
+    ${q.type==='mcq'?q.options.map((o,j)=>`<div class="${j===q.answer?'ok':'mu'}">${'ABCDEF'[j]}) ${esc(o)}</div>`).join(''):`<div class="ok">Answer: ${esc(q.answer)}</div>`}</div>`).join(''):'';
+}
+$('#preview').onclick=e=>{const i=e.target.dataset.rm;if(i!==undefined){draft.splice(+i,1);renderPreview()}};
+$('#saveq').onclick=()=>{
+  sock.emit('saveQuiz',{title:$('#qt').value,questions:draft},r=>{
+    if(!r.ok)return $('#qerr').textContent=r.err;
+    draft=[];$('#qa').value='';$('#qt').value='';$('#qerr').textContent='Quiz saved.';renderPreview();
+  });
+};
+
+/* Admin: quiz list and live room */
+function renderQuizzes(){
+  $('#qlist').innerHTML=quizzes.length?quizzes.map(q=>`<div class="item row"><div><b>${esc(q.title)}</b><br><span class="mu">${q.questions.length} questions</span></div>
+    <div><button class="btn sm" data-open="${q.id}">Open room</button> <button class="btn alt sm" data-del="${q.id}">Delete</button></div></div>`).join(''):'<p class="mu">No quizzes yet. Paste questions on the left to create one.</p>';
+}
+$('#qlist').onclick=e=>{
+  if(e.target.dataset.open)sock.emit('open',e.target.dataset.open);
+  if(e.target.dataset.del&&confirm('Delete this quiz?'))sock.emit('delete',e.target.dataset.del);
+};
+function renderLive(){
+  $('#acode').textContent=st.code||'123456';$('#acount').textContent='';
+  const p=st.phase,last=st.idx+1>=st.total;
+  const btns=p==='lobby'?'<button class="btn" data-act="start">Start quiz</button>'
+    :(p==='question'||p==='closed')?`<button class="btn" data-act="next">${last?'Show final results':'Next question'}</button><button class="btn alt" data-act="end">End now</button>`
+    :p==='done'?'<button class="btn" id="csv">Export results (CSV)</button><button class="btn alt" data-act="closeRoom">Close room</button>':'';
+  $('#live').innerHTML=p==='idle'?'<p class="mu">No room is open. Choose a quiz and press Open room.</p>':`
+    <div class="row"><b>${esc(st.title)}</b><span class="tag">${p}</span></div>
+    <p>Players in room: <b>${st.players.length}</b> of ${st.max}${(p==='question'||p==='closed')?`. Answered: <b>${st.answered}</b>`:''}</p>
+    <p class="mu">${st.players.map(esc).join(', ')||'Nobody has joined yet.'}</p>
+    ${(p==='question'||p==='closed')?`<p>Question ${st.idx+1} of ${st.total}</p>`:''}
+    <div class="row" style="justify-content:flex-start">${btns}</div>
+    <h3 style="margin-top:14px">Leaderboard</h3><ol>${st.board.map(x=>`<li>${esc(x.name)}: ${x.score}</li>`).join('')||'<li class="mu">Empty</li>'}</ol>`;
+}
+$('#live').onclick=e=>{
+  if(e.target.dataset.act)sock.emit(e.target.dataset.act);
+  if(e.target.id==='csv'){
+    const rows=[['Rank','Name','Score'],...st.board.map((x,i)=>[i+1,'"'+x.name.replace(/"/g,'""')+'"',x.score])];
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.map(r=>r.join(',')).join('\n')],{type:'text/csv'}));
+    a.download='nidar-quiz-results.csv';a.click();
+  }
+};
+renderQuizzes();render();
+</script>
+</body>
+</html>
