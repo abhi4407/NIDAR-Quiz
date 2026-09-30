@@ -5,10 +5,11 @@ const crypto = require('crypto');
 const http = require('http');
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const { Server } = require('socket.io');
 const { createAdminRouter } = require('./routes/admin');
 
-const config = { port: Number(process.env.PORT) || 3000, adminUser: process.env.ADMIN_USER || 'admin', adminPass: process.env.ADMIN_PASS || 'admin@123', participantUser: process.env.PARTICIPANT_USER || 'nidar_aerovega', participantPass: process.env.PARTICIPANT_PASS || 'nidar@123', roomCode: process.env.ROOM_CODE || '123456', maxParticipants: Number(process.env.MAX_PARTICIPANTS) || 7 };
+const config = { port: Number(process.env.PORT) || 3000, adminUser: process.env.ADMIN_USER || 'admin', adminPass: process.env.ADMIN_PASS || 'admin@123', participantUser: process.env.PARTICIPANT_USER || 'nidar_aerovega', participantPass: process.env.PARTICIPANT_PASS || 'nidar@123', roomCode: process.env.ROOM_CODE || '123456', maxParticipants: Number(process.env.MAX_PARTICIPANTS) || 7, frontendUrl: (process.env.FRONTEND_URL || '').trim().replace(/\/$/, '') };
 const dataPath = path.join(__dirname, 'data.json');
 let store = loadData();
 store.sessions = new Map();
@@ -16,9 +17,10 @@ store.participants = new Map();
 store.live = { quizId: null, questionIndex: -1, endsAt: 0, answers: new Map(), timer: null };
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, { cors: { origin: config.frontendUrl || true } });
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
+app.use(cors({ origin: config.frontendUrl || true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/config', (req, res) => res.json({ roomCode: config.roomCode, maxParticipants: config.maxParticipants, participantCount: store.participants.size, live: Boolean(store.live.quizId) }));
