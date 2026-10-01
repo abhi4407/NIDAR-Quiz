@@ -20,9 +20,14 @@
       const appScript = document.createElement('script');
       appScript.src = '/js/app.js';
       appScript.onload = () => {
-        const parserScript = document.createElement('script');
-        parserScript.src = '/js/bulk-parser.js';
-        document.body.appendChild(parserScript);
+        const portalScript = document.createElement('script');
+        portalScript.src = '/js/portal.js';
+        portalScript.onload = () => {
+          const parserScript = document.createElement('script');
+          parserScript.src = '/js/bulk-parser.js';
+          document.body.appendChild(parserScript);
+        };
+        document.body.appendChild(portalScript);
       };
       document.body.appendChild(appScript);
     };

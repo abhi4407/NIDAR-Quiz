@@ -39,7 +39,7 @@ window.parseBulk = function parseBulk() {
     return {
       ...question,
       type: isMcq ? 'mcq' : 'fill',
-      answer: isMcq && !/^[A-D]$/.test(question.answer) ? 'A' : question.answer
+      answer: question.answer
     };
   });
 

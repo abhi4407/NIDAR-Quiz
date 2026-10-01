@@ -1,6 +1,6 @@
 const app = document.querySelector('#app');
 const backendUrl = (window.NIDAR_BACKEND_URL || '').replace(/\/$/, '');
-let roomCode = '123456'; let maxParticipants = 7;
+let roomCode = null; let maxParticipants = 7;
 let token = localStorage.getItem('nidar-token'); let role = localStorage.getItem('nidar-role'); let socket; let currentQuestion; let timer;
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const toast = (message) => { const el=document.querySelector('#toast'); el.textContent=message; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); };
